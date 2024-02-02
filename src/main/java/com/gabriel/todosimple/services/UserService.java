@@ -1,7 +1,6 @@
 package com.gabriel.todosimple.services;
 
 import com.gabriel.todosimple.models.User;
-import com.gabriel.todosimple.repositories.TaskRepository;
 import com.gabriel.todosimple.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private TaskRepository taskRepository;
 
     public User findById(Long id) {
         // Optional faz retornar vazio quando não há algo no bd, e não null
@@ -32,7 +28,6 @@ public class UserService {
     public User create(User obj) {
         obj.setId(null);
         obj = this.userRepository.save(obj);
-        this.taskRepository.saveAll(obj.getTasks());
         return obj;
     }
 
