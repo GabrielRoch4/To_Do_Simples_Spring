@@ -2,6 +2,8 @@ package com.gabriel.todosimple.services;
 
 import com.gabriel.todosimple.models.User;
 import com.gabriel.todosimple.repositories.UserRepository;
+import com.gabriel.todosimple.services.exceptions.DataBindingViolationException;
+import com.gabriel.todosimple.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,7 @@ public class UserService {
         // Optional faz retornar vazio quando não há algo no bd, e não null
         Optional<User> user = this.userRepository.findById(id);
         // Caso retorne vazio, é lançado uma exception
-        return user.orElseThrow(() -> new RuntimeException(
+        return user.orElseThrow(() -> new ObjectNotFoundException(
             "Usuário não encontrado! ID: " + id + ", Tipo: " + User.class.getName()
         ));
     }
@@ -43,7 +45,7 @@ public class UserService {
         try{
             this.userRepository.deleteById(id);
         }catch (Exception e) {
-            throw new RuntimeException("Não é possível excluir pois há tasks relacionadas!");
+            throw new DataBindingViolationException("Não é possível excluir pois há tasks relacionadas!");
         }
     }
 
