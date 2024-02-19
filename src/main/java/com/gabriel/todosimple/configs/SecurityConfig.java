@@ -1,5 +1,6 @@
 package com.gabriel.todosimple.configs;
 
+import com.gabriel.todosimple.security.JWTAuthenticationFilter;
 import com.gabriel.todosimple.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -57,15 +58,19 @@ public class SecurityConfig {
 
         this.authenticationManager = authenticationManagerBuilder.build();
 
-        // Sem estado na política de sessão
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         http.authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
                 .requestMatchers(PUBLIC_MATCHERS).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated().and()
+                        .authenticationManager(authenticationManager);
+
+        http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
+
+        // Sem estado na política de sessão
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
+
     }
 
     @Bean
